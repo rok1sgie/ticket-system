@@ -15,8 +15,25 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('tickets.index')" :active="request()->routeIs('tickets.*')">
+    Bilietai
+</x-nav-link>
+
+@if(auth()->user()?->isAdmin())
+    <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
+        Kategorijos
+    </x-nav-link>
+@endif
+
+@if(auth()->user()?->canManageTickets())
+    <x-nav-link :href="route('reports.activeTickets')">
+        PDF ataskaita
+    </x-nav-link>
+@endif
+
                 </div>
             </div>
+
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
