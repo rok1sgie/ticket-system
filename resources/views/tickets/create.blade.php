@@ -1,40 +1,83 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Naujas bilietas</h2>
-    </x-slot>
+@extends('adminlte::page')
 
-    <div class="py-8">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <x-flash-message />
+@section('title', 'Naujas bilietas')
 
-            <form method="POST" action="{{ route('tickets.store') }}" class="bg-white p-6 shadow sm:rounded-lg space-y-4">
-                @csrf
+@section('content_header')
+    <h1>Naujas bilietas</h1>
+@stop
 
-                <div>
-                    <label class="block text-sm font-medium">Pavadinimas</label>
-                    <input name="title" value="{{ old('title') }}" class="mt-1 w-full rounded border-gray-300" required>
+@section('content')
+
+    @include('partials.alerts')
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-plus-circle"></i> Pateikti naują problemą
+            </h3>
+        </div>
+
+        <form method="POST" action="{{ route('tickets.store') }}">
+            @csrf
+
+            <div class="card-body">
+
+                <div class="form-group">
+                    <label for="title">Pavadinimas</label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        value="{{ old('title') }}"
+                        class="form-control"
+                        placeholder="Pvz.: Neveikia internetas"
+                        required
+                    >
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium">Kategorija</label>
-                    <select name="category_id" class="mt-1 w-full rounded border-gray-300" required>
-                        <option value="">Pasirinkite</option>
+                <div class="form-group">
+                    <label for="category_id">Kategorija</label>
+                    <select
+                        id="category_id"
+                        name="category_id"
+                        class="form-control"
+                        required
+                    >
+                        <option value="">Pasirinkite kategoriją</option>
+
                         @foreach($categories as $category)
-                            <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>{{ $category->name }}</option>
+                            <option value="{{ $category->id }}"
+                                @selected(old('category_id') == $category->id)>
+                                {{ $category->name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium">Aprašymas</label>
-                    <textarea name="description" rows="6" class="mt-1 w-full rounded border-gray-300" required>{{ old('description') }}</textarea>
+                <div class="form-group">
+                    <label for="description">Aprašymas</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="6"
+                        class="form-control"
+                        placeholder="Detaliai aprašykite problemą..."
+                        required
+                    >{{ old('description') }}</textarea>
                 </div>
 
-                <div class="flex gap-2">
-                    <button class="rounded bg-blue-600 px-4 py-2 text-white">Sukurti</button>
-                    <a href="{{ route('tickets.index') }}" class="rounded bg-gray-200 px-4 py-2 text-gray-800">Atgal</a>
-                </div>
-            </form>
-        </div>
+            </div>
+
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Sukurti
+                </button>
+
+                <a href="{{ route('tickets.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Atgal
+                </a>
+            </div>
+        </form>
     </div>
-</x-app-layout>
+
+@stop
