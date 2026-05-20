@@ -1,29 +1,73 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+@extends('adminlte::page')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
+@section('title', 'Profilis')
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
+@section('content_header')
+    <h1>Profilio nustatymai</h1>
+@stop
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
+@section('content')
+
+    @include('partials.alerts')
+
+    @if (session('status') === 'profile-updated')
+        <div class="alert alert-success">
+            Profilio informacija atnaujinta.
         </div>
+    @endif
+
+    @if (session('status') === 'password-updated')
+        <div class="alert alert-success">
+            Slaptažodis sėkmingai pakeistas.
+        </div>
+    @endif
+
+    @if (session('status') === 'user-deleted')
+        <div class="alert alert-danger">
+            Vartotojas pašalintas.
+        </div>
+    @endif
+
+    <div class="card">
+
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-user"></i> Profilio informacija
+            </h3>
+        </div>
+
+        <div class="card-body">
+            @include('profile.partials.update-profile-information-form')
+        </div>
+
     </div>
-</x-app-layout>
+
+    <div class="card">
+
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-lock"></i> Keisti slaptažodį
+            </h3>
+        </div>
+
+        <div class="card-body">
+            @include('profile.partials.update-password-form')
+        </div>
+
+    </div>
+
+    <div class="card card-danger">
+
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-trash"></i> Pašalinti paskyrą
+            </h3>
+        </div>
+
+        <div class="card-body">
+            @include('profile.partials.delete-user-form')
+        </div>
+
+    </div>
+
+@stop

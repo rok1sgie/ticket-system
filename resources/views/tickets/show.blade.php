@@ -1,74 +1,167 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Bilieto peržiūra</h2>
-    </x-slot>
+@extends('adminlte::page')
 
-    <div class="py-8">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <x-flash-message />
+@section('title', 'Bilieto peržiūra')
 
-            <div class="bg-white p-6 shadow sm:rounded-lg">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h3 class="text-2xl font-bold">{{ $ticket->title }}</h3>
-                        <p class="text-gray-600 mt-1">{{ $ticket->category->name }} | {{ $ticket->created_at->format('Y-m-d H:i') }}</p>
-                        <p class="text-gray-600">Savininkas: {{ $ticket->user->name }}</p>
-                    </div>
-                    <span class="rounded bg-blue-100 px-3 py-1 text-blue-800">{{ $ticket->statusLabel() }}</span>
-                </div>
+@section('content_header')
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Bilieto peržiūra</h1>
 
-                <div class="mt-6 whitespace-pre-line">
-                    {{ $ticket->description }}
-                </div>
+        <a href="{{ route('tickets.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Grįžti į sąrašą
+        </a>
+    </div>
+@stop
 
-                @if(auth()->user()->isAdmin() || auth()->id() === $ticket->user_id)
-                    <div class="mt-6">
-                        <a href="{{ route('tickets.edit', $ticket) }}" class="rounded bg-yellow-500 px-4 py-2 text-white">Redaguoti</a>
-                    </div>
+@section('content')
+
+    @include('partials.alerts')
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-ticket-alt"></i> {{ $ticket->title }}
+            </h3>
+
+            <div class="card-tools">
+                @if($ticket->status === 'new')
+                    <span class="badge badge-primary">Naujas</span>
+                @elseif($ticket->status === 'in_progress')
+                    <span class="badge badge-warning">Vykdomas</span>
+                @elseif($ticket->status === 'resolved')
+                    <span class="badge badge-success">Užbaigtas</span>
+                @else
+                    <span class="badge badge-secondary">Uždarytas</span>
                 @endif
             </div>
+        </div>
 
-            @if(auth()->user()->canManageTickets())
-                <div class="bg-white p-6 shadow sm:rounded-lg">
-                    <h3 class="font-semibold text-lg mb-4">Keisti būseną</h3>
-                    <form method="POST" action="{{ route('tickets.updateStatus', $ticket) }}" class="flex gap-3">
-                        @csrf
-                        @method('PATCH')
-                        <select name="status" class="rounded border-gray-300">
-                            @foreach($statuses as $key => $label)
-                                <option value="{{ $key }}" @selected($ticket->status === $key)>{{ $label }}</option>
-                            @endforeach
-                        </select>
-                        <button class="rounded bg-blue-600 px-4 py-2 text-white">Atnaujinti</button>
-                    </form>
-                </div>
+        <div class="card-body">
+            <p>
+                <strong>Kategorija:</strong>
+                {{ $ticket->category->name }}
+            </p>
 
-                <div class="bg-white p-6 shadow sm:rounded-lg">
-                    <h3 class="font-semibold text-lg mb-4">Pridėti komentarą</h3>
-                    <form method="POST" action="{{ route('tickets.comments.store', $ticket) }}" class="space-y-4">
-                        @csrf
-                        <textarea name="comment" rows="4" class="w-full rounded border-gray-300" required>{{ old('comment') }}</textarea>
-                        <button class="rounded bg-green-600 px-4 py-2 text-white">Pridėti komentarą</button>
-                    </form>
-                </div>
-            @endif
+            <p>
+                <strong>Savininkas:</strong>
+                {{ $ticket->user->name }}
+            </p>
 
-            <div class="bg-white p-6 shadow sm:rounded-lg">
-                <h3 class="font-semibold text-lg mb-4">Komentarai</h3>
+            <p>
+                <strong>Sukurta:</strong>
+                {{ $ticket->created_at->format('Y-m-d H:i') }}
+            </p>
 
-                @forelse($ticket->comments as $comment)
-                    <div class="border-b py-4">
-                        <div class="text-sm text-gray-600">
-                            {{ $comment->user->name }} | {{ $comment->created_at->format('Y-m-d H:i') }}
-                        </div>
-                        <p class="mt-2 whitespace-pre-line">{{ $comment->comment }}</p>
-                    </div>
-                @empty
-                    <p class="text-gray-500">Komentarų nėra.</p>
-                @endforelse
+            <hr>
+
+            <h5>Aprašymas</h5>
+
+            <p style="white-space: pre-line;">
+                {{ $ticket->description }}
+            </p>
+        </div>
+
+        @if(auth()->user()->isAdmin() || auth()->id() === $ticket->user_id)
+            <div class="card-footer">
+                <a href="{{ route('tickets.edit', $ticket) }}" class="btn btn-warning">
+                    <i class="fas fa-edit"></i> Redaguoti
+                </a>
+            </div>
+        @endif
+    </div>
+
+    @if(auth()->user()->canManageTickets())
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-sync-alt"></i> Keisti būseną
+                </h3>
             </div>
 
-            <a href="{{ route('tickets.index') }}" class="text-blue-600">Grįžti į sąrašą</a>
+            <form method="POST" action="{{ route('tickets.updateStatus', $ticket) }}">
+                @csrf
+                @method('PATCH')
+
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="status">Būsena</label>
+
+                        <select id="status" name="status" class="form-control">
+                            @foreach($statuses as $key => $label)
+                                <option value="{{ $key }}" @selected($ticket->status === $key)>
+                                    {{ $label }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-save"></i> Atnaujinti būseną
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-comment"></i> Pridėti komentarą
+                </h3>
+            </div>
+
+            <form method="POST" action="{{ route('tickets.comments.store', $ticket) }}">
+                @csrf
+
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="comment">Komentaras / pastaba</label>
+
+                        <textarea
+                            id="comment"
+                            name="comment"
+                            rows="4"
+                            class="form-control"
+                            placeholder="Įrašykite komentarą..."
+                            required
+                        >{{ old('comment') }}</textarea>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button class="btn btn-success">
+                        <i class="fas fa-plus"></i> Pridėti komentarą
+                    </button>
+                </div>
+            </form>
+        </div>
+    @endif
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-comments"></i> Komentarai
+            </h3>
+        </div>
+
+        <div class="card-body">
+            @forelse($ticket->comments as $comment)
+                <div class="border-bottom mb-3 pb-3">
+                    <p class="mb-1">
+                        <strong>{{ $comment->user->name }}</strong>
+                        <span class="text-muted">
+                            | {{ $comment->created_at->format('Y-m-d H:i') }}
+                        </span>
+                    </p>
+
+                    <p style="white-space: pre-line;">
+                        {{ $comment->comment }}
+                    </p>
+                </div>
+            @empty
+                <p class="text-muted mb-0">Komentarų nėra.</p>
+            @endforelse
         </div>
     </div>
-</x-app-layout>
+
+@stop

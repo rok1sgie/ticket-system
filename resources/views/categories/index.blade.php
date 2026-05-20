@@ -1,42 +1,100 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Kategorijos</h2>
-            <a href="{{ route('categories.create') }}" class="rounded bg-blue-600 px-4 py-2 text-white">Nauja kategorija</a>
-        </div>
-    </x-slot>
+@extends('adminlte::page')
 
-    <div class="py-8">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <x-flash-message />
+@section('title', 'Kategorijos')
 
-            <div class="bg-white shadow sm:rounded-lg overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase">Pavadinimas</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase">Bilietų kiekis</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase">Veiksmai</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        @foreach($categories as $category)
-                            <tr>
-                                <td class="px-6 py-4">{{ $category->name }}</td>
-                                <td class="px-6 py-4">{{ $category->tickets_count }}</td>
-                                <td class="px-6 py-4 flex gap-2">
-                                    <a href="{{ route('categories.edit', $category) }}" class="text-yellow-600">Redaguoti</a>
-                                    <form method="POST" action="{{ route('categories.destroy', $category) }}" onsubmit="return confirm('Ar tikrai pašalinti?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="text-red-600">Trinti</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
+@section('content_header')
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Kategorijos</h1>
+
+        <a href="{{ route('categories.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nauja kategorija
+        </a>
     </div>
-</x-app-layout>
+@stop
+
+@section('content')
+
+    @include('partials.alerts')
+
+    <div class="card">
+
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-list"></i> Kategorijų sąrašas
+            </h3>
+        </div>
+
+        <div class="card-body table-responsive">
+
+            <table class="table table-bordered table-hover">
+
+                <thead>
+                <tr>
+                    <th>Pavadinimas</th>
+                    <th>Bilietų kiekis</th>
+                    <th>Veiksmai</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                @forelse($categories as $category)
+
+                    <tr>
+
+                        <td>{{ $category->name }}</td>
+
+                        <td>
+                            <span class="badge badge-info">
+                                {{ $category->tickets_count }}
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <a href="{{ route('categories.edit', $category) }}"
+                               class="btn btn-sm btn-warning">
+
+                                <i class="fas fa-edit"></i> Redaguoti
+
+                            </a>
+
+                            <form method="POST"
+                                  action="{{ route('categories.destroy', $category) }}"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Ar tikrai pašalinti kategoriją?')">
+
+                                @csrf
+                                @method('DELETE')
+
+                                <button class="btn btn-sm btn-danger">
+
+                                    <i class="fas fa-trash"></i> Trinti
+
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">
+                            Kategorijų nėra.
+                        </td>
+                    </tr>
+
+                @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+@stop
