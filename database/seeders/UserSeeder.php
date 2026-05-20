@@ -11,28 +11,28 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::firstOrCreate(
-            ['email' => 'rokas.giedraitis@stud.svako.lt'],
+            ['email' => env('ADMIN_EMAIL')],
             [
                 'name' => 'Administratorius',
-                'password' => Hash::make('rokas123'),
+                'password' => Hash::make(env('ADMIN_PASSWORD')),
                 'role' => 'admin',
             ]
         );
 
         User::firstOrCreate(
-            ['email' => 'support@stud.svako.lt'],
+            ['email' => env('SUPPORT_EMAIL')],
             [
                 'name' => 'Support darbuotojas',
-                'password' => Hash::make('rokas123'),
+                'password' => Hash::make(env('SUPPORT_PASSWORD')),
                 'role' => 'support',
             ]
         );
 
         User::firstOrCreate(
-            ['email' => 'Edvinas@stud.svako.lt'],
+            ['email' => env('USER_EMAIL')],
             [
                 'name' => 'Paprastas vartotojas',
-                'password' => Hash::make('rokas123'),
+                'password' => Hash::make(env('USER_PASSWORD')),
                 'role' => 'user',
             ]
         );
