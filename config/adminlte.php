@@ -69,6 +69,7 @@ return [
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
     'logo_img_alt' => 'Admin Logo',
+    
 
     /*
     |--------------------------------------------------------------------------
@@ -309,6 +310,18 @@ return [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
+        [
+    'text' => env('COMPANY_NAME', 'Įmonės pavadinimas'),
+    'icon' => 'fas fa-building',
+    'topnav_right' => true,
+    'url' => '#',
+    'classes' => 'font-weight-bold',
+],
+[
+    'text' => 'Valdymo skydelis',
+    'url'  => 'dashboard',
+    'icon' => 'fas fa-tachometer-alt',
+],
 
        [
         'text' => 'Bilietai',
