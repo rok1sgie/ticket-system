@@ -1,3 +1,6 @@
+### Valdymo skydelis
+
+![Skydelis](screenshots/Skydelis.png)
 
 ## Problemų (Ticket) registravimo ir sekimo sistema  sistema
 Tai Laravel 12 pagrindu sukurta problemų registravimo ir sekimo sistema, skirta IT pagalbos bei kitų organizacijos problemų valdymui. Sistema leidžia vartotojams kurti problemų bilietus, stebėti jų būsenas bei gauti el. pašto pranešimus apie atliktus pakeitimus.
